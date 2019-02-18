@@ -4,7 +4,7 @@
 >
 > Contributed by Seungryong Kim (srkim89@yonsei.ac.kr).
 
-This code is written in MATLAB, and implements the FCSS descriptor [[website](https://github.com/seungryong/FCSS/)]. 
+This code is written in MATLAB, and implements the FCSS descriptor [[project website](https://seungryong.github.io/FCSS/)]. 
 
 ## Dependencies
   - Download [VLFeat] (http://www.vlfeat.org/) and [MatConvNet] (http://www.vlfeat.org/matconvnet/).
