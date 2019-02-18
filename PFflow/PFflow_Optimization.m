@@ -1,0 +1,125 @@
+function [warpI2,flow,flow_overlay,ShowMatch] = PFflow_Optimization(imgA, imgB)
+    % demo code for computing dense flow field
+    % using ProposalFlow (LOM+SS)
+
+    % show object proposal matching
+    bShowMatch = true;
+    
+    % common functions
+    addpath('PFflow/commonFunctions');
+
+    % matching algorithm
+    addpath('PFflow/algorithms');
+
+    % object proposals
+    addpath('PFflow/object-proposal');
+    % selective search
+    addpath('PFflow/object-proposal/SelectiveSearchCodeIJCV');
+    addpath('PFflow/object-proposal/SelectiveSearchCodeIJCV/Dependencies');
+
+    % dense correspondence
+    addpath('PFflow/denseCorrespondence');
+
+    % SD filter
+    addpath('PFflow/sdFilter');    
+
+    % parameter for SD-filtering (SDF)
+    sdf.nei= 0;                 % 0: 4-neighbor 1: 8-neighbor
+    sdf.lambda = 20;            % smoothness parameter
+    sdf.sigma_g = 30;           % bandwidth for static guidance
+    sdf.sigma_u = 15;           % bandwidth for dynamic guidance
+    sdf.itr=2;                  % number of iterations
+    sdf.issparse=true;          % is the inpu
+
+    num_op = 500; %number of object proposals
+
+    % ===============================================================
+    % extracting object proposals using SelectiveSearch
+    % ===============================================================
+    fprintf(' + Extrating object proposals ');
+    tic;
+    [proposalA, ~] = SS(imgA, num_op);% (x,y) coordinates ([col,row]) for left-top and right-bottom points
+    [proposalB, ~] = SS(imgB, num_op);% (x,y) coordinates ([col,row]) for left-top and right-bottom points
+    opA.coords=proposalA;
+    opB.coords=proposalB;
+    clear proposalA; clear proposalB;
+    fprintf('took %.2f secs.\n\n',toc);
+
+    % ===============================================================
+    % extrating feature descriptors
+    % ===============================================================
+    fprintf(' + Extrating features ');
+    tic;
+    featA =  extract_segfeat_fcss(imgA,opA);
+    featB =  extract_segfeat_fcss(imgB,opB);
+    fprintf('took %.2f secs.\n\n',toc);
+
+    viewA = load_view(imgA,opA,featA);
+    viewB = load_view(imgB,opB,featB);
+    clear featA; clear featB;
+    clear opA; clear opB;
+
+    % ===============================================================
+    % matching object proposals
+    % ===============================================================
+    fprintf(' + Matching object proposals\n');
+    fprintf('   - # of features: A %d => # B %d\n', size(viewA.desc,2), size(viewB.desc,2) );
+
+    % options for matching
+    opt.bDeleteByAspect = true;
+    opt.bDensityAware = false;
+    opt.bSimVote = true;
+    opt.bVoteExp = true;
+    opt.feature = 'FCSS';
+
+    % matching algorithm
+    % NAM: naive appearance matching
+    % PHM: probabilistic Hough matching
+    % LOM: local offset matching
+    tic;
+    confidence = feval( @LOM, viewA, viewB, opt );
+    fprintf('   - %s took %.2f secs.\n\n', func2str(@LOM), toc);
+    t1=toc;
+
+    % ===============================================================
+    % show object proposal matching
+    % ===============================================================
+ 
+    if bShowMatch
+        [confidenceA, max_id ] = max(confidence,[],2);
+        match = [ 1:numel(max_id); max_id'];
+        hFig_match = figure; clf;
+        imgInput = appendimages( viewA.img, viewB.img, 'h' );
+        imshow(rgb2gray(imgInput)); hold on;
+        showColoredMatches(viewA.frame, viewB.frame, match,...
+        confidenceA, 'offset', [ size(viewA.img,2) 0 ], 'mode', 'box');
+        implot = getframe;
+        ShowMatch = implot.cdata;
+        close(hFig_match);
+    end
+
+    % ===============================================================
+    % computing dense flow field
+    % ===============================================================
+    fprintf(' + Computing dense correspondnece ');
+    tic;
+    bPost=true; % applying post processing using SDFilering
+    match = flow_field_generation(viewA, viewB, confidence, sdf, bPost);
+    fprintf('took %.2f secs.\n\n',toc);
+    t2=toc;
+
+    fprintf('==================================\n');
+    fprintf('Total flow took %.2f secs\n',t1+t2);
+    fprintf('==================================\n');
+
+%     save(fullfile(conf.resultDir,'flow.mat'), 'match');
+
+	warpI2 = warpImage(single(viewB.img),match.vx,match.vy);
+    
+    clear flow;
+    flow(:,:,1) = match.vx;
+    flow(:,:,2) = match.vy;
+    
+    flow_overlay = createOverlayImage(viewA.img,flowToColor(flow));
+       
+end
