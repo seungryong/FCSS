@@ -18,14 +18,14 @@ This code is written in MATLAB, and implements the FCSS descriptor [[project web
   - `main_FCSS_train_Tatsunori.m`  shows how to train a new model.
   - `get_train_Tatsunori.m`: prepares the filenames of training samples.
 
-# Main functions 
+### Main functions ### 
   - `getBatch_Tatsunori.m`: prepares the images of training samples.
   - `init_FCSS.m`: builds an initial model of FCSS descriptor.
   - `CSSlayer.m`: builds convolutional self-similarity (CSS) layers using a bilinear sampler similar to spatial transformer networks (STNs) [3].
   - `CSSlayer_shift.m`: builds convolutional self-similarity (CSS) using Taylor expansion.
   - `CorrespondenceLoss.m`: builds a weakly-supervised correspondence loss for FCSS descriptor.
   
-# Notes
+### Notes ###
 
   - The code is provided for academic use only. Use of the code in any commercial or industrial related activities is prohibited. 
   - If you use our code, please cite the paper. 
@@ -39,7 +39,7 @@ year = {2017}
 }
 ```
 
-# References
+### References ###
 
 [1] C. Liu, J. Yuen, and A. Torralba, "Sift flow: Dense correspondence across scenes and its applications", IEEE Trans. Pattern Anal. Mach. Intell. (TPAMI), 33(5), pp. 815-830, 2011.
 
