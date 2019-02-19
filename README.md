@@ -6,26 +6,26 @@
 
 This code is written in MATLAB, and implements the FCSS descriptor [[project website](https://seungryong.github.io/FCSS/)]. 
 
-### Dependencies ###
+## Dependencies ##
   - Download [VLFeat] (http://www.vlfeat.org/) and [MatConvNet] (http://www.vlfeat.org/matconvnet/).
   - Download the datasets:
     - [Taniai Benchmark] (http://taniai.space/projects/cvpr16_dccs/);
     - [Proposal Flow Benchmark] (http://www.di.ens.fr/willow/research/proposalflow/);
     - [Pascal-VOC Part Dataset] (https://people.eecs.berkeley.edu/~tinghuiz/projects/flowWeb/).
 
-### Getting started ###
+## Getting started ##
   - `main_FCSS_test.m` shows how to compute dense flow fields using the pretrained FCSS descriptor (`data/fcss/net-epoch.mat`) with SIFT Flow [1] and Proposal Flow [2] optimization.
   - `main_FCSS_train_Tatsunori.m`  shows how to train a new model.
   - `get_train_Tatsunori.m`: prepares the filenames of training samples.
 
-### Main functions ### 
+## Main functions ##
   - `getBatch_Tatsunori.m`: prepares the images of training samples.
   - `init_FCSS.m`: builds an initial model of FCSS descriptor.
   - `CSSlayer.m`: builds convolutional self-similarity (CSS) layers using a bilinear sampler similar to spatial transformer networks (STNs) [3].
   - `CSSlayer_shift.m`: builds convolutional self-similarity (CSS) using Taylor expansion.
   - `CorrespondenceLoss.m`: builds a weakly-supervised correspondence loss for FCSS descriptor.
   
-### Notes ###
+## Notes ##
 
   - The code is provided for academic use only. Use of the code in any commercial or industrial related activities is prohibited. 
   - If you use our code, please cite the paper. 
@@ -39,7 +39,7 @@ year = {2017}
 }
 ```
 
-### References ###
+## References ##
 
 [1] C. Liu, J. Yuen, and A. Torralba, "Sift flow: Dense correspondence across scenes and its applications", IEEE Trans. Pattern Anal. Mach. Intell. (TPAMI), 33(5), pp. 815-830, 2011.
 
