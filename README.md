@@ -6,7 +6,7 @@
 
 This code is written in MATLAB, and implements the FCSS descriptor [[project website](https://seungryong.github.io/FCSS/)]. 
 
-## Dependencies
+### Dependencies ###
   - Download [VLFeat] (http://www.vlfeat.org/) and [MatConvNet] (http://www.vlfeat.org/matconvnet/).
   - Download the datasets:
     - [Taniai Benchmark] (http://taniai.space/projects/cvpr16_dccs/);
